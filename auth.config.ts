@@ -1,12 +1,19 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials"; // ✅ Add this
 import GitHub from "next-auth/providers/github";
 import Resend from "next-auth/providers/resend";
-// import bcrypt from "bcryptjs"
-// import { z } from "zod"
+import { z } from "zod";
 
 const prisma = new PrismaClient();
+
+// ✅ Add the validation schema
+const credentialsSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 export default {
   adapter: PrismaAdapter(prisma),
@@ -14,6 +21,36 @@ export default {
     GitHub,
     Resend({
       from: "noreply@frostcore.tech",
+    }),
+    Credentials({
+      credentials: {
+        email: { type: "email" },
+        password: { type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = z
+          .object({
+            email: z.string().email(),
+            password: z.string().min(6),
+          })
+          .parse(credentials);
+
+        const user = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        if (!user?.password) return null;
+
+        const valid = await bcrypt.compare(password, user.password);
+        if (!valid) return null;
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        };
+      },
     }),
   ],
   session: {
