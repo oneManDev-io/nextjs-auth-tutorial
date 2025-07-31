@@ -9,12 +9,6 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-// ✅ Add the validation schema
-const credentialsSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
-
 export default {
   adapter: PrismaAdapter(prisma),
   providers: [
