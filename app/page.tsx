@@ -46,7 +46,9 @@ export default async function Home() {
             <figure>
               <Image
                 src={
-                  user.image ? user.image : "https://icons8.com/icons/set/user"
+                  user.image
+                    ? user.image
+                    : "https://img.icons8.com/?size=100&id=13042&format=png&color=000000"
                 }
                 alt="User"
                 width={100}

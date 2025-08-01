@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "icons8.com",
+        hostname: "*.icons8.com",
         port: "",
         pathname: "/**",
       },
