@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
+const TOKEN_EXPIRY_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     // Generate new verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const verificationExpires = new Date(Date.now() + TOKEN_EXPIRY_DURATION); // 24 hours
 
     await prisma.verificationToken.create({
       data: {

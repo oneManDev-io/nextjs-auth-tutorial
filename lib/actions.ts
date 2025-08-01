@@ -85,7 +85,7 @@ export async function signup(formData: FormData) {
 }
 
 // Forgot password action
-export async function forgotPassword(prevState: any, formData: FormData) {
+export async function forgotPassword(formData: FormData) {
   const email = formData.get("email") as string;
 
   if (!email) {
